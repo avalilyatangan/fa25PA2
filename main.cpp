@@ -84,6 +84,9 @@ int createLeafNodes(int freq[]) {
         }
     }
     cout << "Created " << nextFree << " leaf nodes.\n";
+
+    //debug statement: cout << "createLeafNodes() successfully.\n";
+
     return nextFree;
 }
 
@@ -102,15 +105,16 @@ int buildEncodingTree(int nextFree) {
     // declaring MinHeap object
     MinHeap heap;
 
-    // pushing leaf node indices into the heap
+    // pushing leaf node indices into the heap; based on weights
     for (int i = 0; i < nextFree; i++) {
         heap.push(i, weightArr);
     }
 
-    // declaring 2 smallest nodes
+    // declaring variables for 2 smallest nodes
     int smallest1;
     int smallest2;
 
+    // dev log: heap.size was not working because i wrote heap.size()
     while (heap.size > 1) {
         // pop two smallest nodes
         smallest1 = heap.pop(weightArr);
@@ -119,14 +123,16 @@ int buildEncodingTree(int nextFree) {
         // parent node with combined weight
         weightArr[nextFree] = weightArr[smallest1] + weightArr[smallest2];
 
-        // setting left/right pointers
+        // setting left/right child pointers
         leftArr[nextFree] = smallest1;
         rightArr[nextFree] = smallest2;
 
-        // pushes new parent index into the heap
+        // pushes new parent node back into the heap
         heap.push(nextFree, weightArr);
         nextFree++;
     }
+
+    cout << "buildEncodingTree built successfully.\n";
 
     // returns index of the root
     return heap.pop(weightArr);
@@ -138,11 +144,49 @@ void generateCodes(int root, string codes[]) {
     // Use stack<pair<int, string>> to simulate DFS traversal.
     // Left edge adds '0', right edge adds '1'.
     // Record code when a leaf node is reached.
+
+    // codeStack stores index and binary code
+    stack<pair<int, string>> codeStack;
+
+    // start traversal at root
+    codeStack.push({root, ""});
+
+
+    while (!codeStack.empty()) {
+        // auto is used to figure out the type
+        auto [node, code] = codeStack.top();
+        codeStack.pop();
+
+        // gets left and right child indexes
+        int left = leftArr[node];
+        int right = rightArr[node];
+
+        // assigns code if right and left children are empty
+        if (left == -1 && right == -1) {
+            char ch = charArr[node]; // gets char stored at leaf node
+
+            // stores binary code for the letter
+            if (ch >= 'a' && ch <= 'z') {
+                codes[ch - 'a'] = code;
+            }
+        }
+        else {
+            // pushes right first so left is processed first
+            if (right != -1) {
+                codeStack.push({right, code + "1"});
+            }
+            if (left != -1) {
+                codeStack.push({left, code + "0"});
+            }
+        }
+
+    }
 }
 
 // Step 5: Print table and encoded message
 void encodeMessage(const string& filename, string codes[]) {
     cout << "\nCharacter : Code\n";
+
     for (int i = 0; i < 26; ++i) {
         if (!codes[i].empty())
             cout << char('a' + i) << " : " << codes[i] << "\n";
