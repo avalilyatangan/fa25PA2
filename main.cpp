@@ -68,7 +68,7 @@ void buildFrequencyTable(int freq[], const string& filename) {
     }
     file.close();
 
-    cout << "Frequency table built successfully.\n";
+    // cout << "Frequency table built successfully.\n";
 }
 
 // Step 2: Create leaf nodes for each character
@@ -83,9 +83,9 @@ int createLeafNodes(int freq[]) {
             nextFree++;
         }
     }
-    cout << "Created " << nextFree << " leaf nodes.\n";
+    // cout << "Created " << nextFree << " leaf nodes.\n";
 
-    //debug statement: cout << "createLeafNodes() successfully.\n";
+    // debug statement: cout << "createLeafNodes() successfully.\n";
 
     return nextFree;
 }
@@ -132,7 +132,7 @@ int buildEncodingTree(int nextFree) {
         nextFree++;
     }
 
-    cout << "buildEncodingTree built successfully.\n";
+    // cout << "buildEncodingTree built successfully.\n";
 
     // returns index of the root
     return heap.pop(weightArr);
